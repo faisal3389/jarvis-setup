@@ -1,0 +1,74 @@
+{
+  "entries": [
+    {
+      "date": "2026-10-30",
+      "rank": 2,
+      "category": "blocking",
+      "action": "Set up a Stripe payouts export so the Scout can report payouts",
+      "acted": false
+    },
+    {
+      "date": "2026-11-06",
+      "rank": 1,
+      "category": "blocking",
+      "action": "Renew the App Store Connect API key that expires 2026-11-10 so the RevenueCat export keeps working",
+      "acted": true
+    },
+    {
+      "date": "2026-11-06",
+      "rank": 2,
+      "category": "outperforming",
+      "action": "Raise the UGC-Testimonial-v3 daily budget from $45 to $50",
+      "acted": true
+    },
+    {
+      "date": "2026-11-06",
+      "rank": 3,
+      "category": "degrading",
+      "action": "Reply to the 1-star App Store review about sync from user 'mkell'",
+      "acted": false
+    },
+    {
+      "date": "2026-11-07",
+      "rank": 1,
+      "category": "blocking",
+      "action": "Ship the 3.4.2 hotfix for the iPad sidebar crash that is stuck in TestFlight",
+      "acted": true
+    },
+    {
+      "date": "2026-11-07",
+      "rank": 2,
+      "category": "outperforming",
+      "action": "Duplicate UGC-Testimonial-v3 into a new ad set aimed at students",
+      "acted": true
+    },
+    {
+      "date": "2026-11-07",
+      "rank": 3,
+      "category": "degrading",
+      "action": "Pause the Static-Discount-20 ad set",
+      "acted": false
+    },
+    {
+      "date": "2026-11-08",
+      "rank": 1,
+      "category": "blocking",
+      "action": "Confirm build 3.4.2 passed App Review before the Monday morning traffic",
+      "acted": true
+    },
+    {
+      "date": "2026-11-08",
+      "rank": 2,
+      "category": "outperforming",
+      "action": "Record two more testimonial variants modeled on UGC-Testimonial-v3",
+      "acted": true
+    },
+    {
+      "date": "2026-11-08",
+      "rank": 3,
+      "category": "degrading",
+      "action": "Cut Video-Demo-30s to a 15-second cut to lift its ROAS",
+      "acted": true
+    }
+  ]
+}

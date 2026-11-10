@@ -1,0 +1,259 @@
+{
+  "source": "Meta Ads (mock export)",
+  "exportedAt": "2026-11-09T05:00:00-05:00",
+  "currency": "USD",
+  "rows": [
+    {
+      "date": "2026-11-02",
+      "ad_name": "UGC-Testimonial-v3",
+      "spend": 42.1,
+      "purchase_value": 107.36,
+      "impressions": 4292,
+      "clicks": 87,
+      "purchases": 6
+    },
+    {
+      "date": "2026-11-02",
+      "ad_name": "Static-Discount-20",
+      "spend": 49.75,
+      "purchase_value": 70.65,
+      "impressions": 4021,
+      "clicks": 34,
+      "purchases": 7
+    },
+    {
+      "date": "2026-11-02",
+      "ad_name": "Carousel-Features-v2",
+      "spend": 38.4,
+      "purchase_value": 59.52,
+      "impressions": 3409,
+      "clicks": 44,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-02",
+      "ad_name": "Video-Demo-30s",
+      "spend": 41.2,
+      "purchase_value": 46.97,
+      "impressions": 3911,
+      "clicks": 46,
+      "purchases": 3
+    },
+    {
+      "date": "2026-11-03",
+      "ad_name": "UGC-Testimonial-v3",
+      "spend": 43.8,
+      "purchase_value": 122.64,
+      "impressions": 4682,
+      "clicks": 87,
+      "purchases": 6
+    },
+    {
+      "date": "2026-11-03",
+      "ad_name": "Static-Discount-20",
+      "spend": 48.2,
+      "purchase_value": 59.77,
+      "impressions": 3832,
+      "clicks": 36,
+      "purchases": 6
+    },
+    {
+      "date": "2026-11-03",
+      "ad_name": "Carousel-Features-v2",
+      "spend": 39.15,
+      "purchase_value": 65.77,
+      "impressions": 3579,
+      "clicks": 47,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-03",
+      "ad_name": "Video-Demo-30s",
+      "spend": 40.55,
+      "purchase_value": 51.09,
+      "impressions": 4000,
+      "clicks": 41,
+      "purchases": 3
+    },
+    {
+      "date": "2026-11-04",
+      "ad_name": "UGC-Testimonial-v3",
+      "spend": 45.25,
+      "purchase_value": 136.66,
+      "impressions": 4952,
+      "clicks": 100,
+      "purchases": 7
+    },
+    {
+      "date": "2026-11-04",
+      "ad_name": "Static-Discount-20",
+      "spend": 47.9,
+      "purchase_value": 51.73,
+      "impressions": 3877,
+      "clicks": 33,
+      "purchases": 5
+    },
+    {
+      "date": "2026-11-04",
+      "ad_name": "Carousel-Features-v2",
+      "spend": 40.6,
+      "purchase_value": 64.15,
+      "impressions": 3798,
+      "clicks": 46,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-04",
+      "ad_name": "Video-Demo-30s",
+      "spend": 39.9,
+      "purchase_value": 47.48,
+      "impressions": 3646,
+      "clicks": 38,
+      "purchases": 3
+    },
+    {
+      "date": "2026-11-05",
+      "ad_name": "UGC-Testimonial-v3",
+      "spend": 47.6,
+      "purchase_value": 152.8,
+      "impressions": 4999,
+      "clicks": 95,
+      "purchases": 8
+    },
+    {
+      "date": "2026-11-05",
+      "ad_name": "Static-Discount-20",
+      "spend": 46.85,
+      "purchase_value": 43.57,
+      "impressions": 3792,
+      "clicks": 32,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-05",
+      "ad_name": "Carousel-Features-v2",
+      "spend": 39.8,
+      "purchase_value": 64.48,
+      "impressions": 3449,
+      "clicks": 46,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-05",
+      "ad_name": "Video-Demo-30s",
+      "spend": 40.75,
+      "purchase_value": 49.72,
+      "impressions": 3924,
+      "clicks": 43,
+      "purchases": 3
+    },
+    {
+      "date": "2026-11-06",
+      "ad_name": "UGC-Testimonial-v3",
+      "spend": 49.9,
+      "purchase_value": 172.16,
+      "impressions": 5036,
+      "clicks": 103,
+      "purchases": 9
+    },
+    {
+      "date": "2026-11-06",
+      "ad_name": "Static-Discount-20",
+      "spend": 46.1,
+      "purchase_value": 36.42,
+      "impressions": 3690,
+      "clicks": 32,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-06",
+      "ad_name": "Carousel-Features-v2",
+      "spend": 41.05,
+      "purchase_value": 61.99,
+      "impressions": 3914,
+      "clicks": 48,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-06",
+      "ad_name": "Video-Demo-30s",
+      "spend": 39.6,
+      "purchase_value": 45.54,
+      "impressions": 3771,
+      "clicks": 40,
+      "purchases": 3
+    },
+    {
+      "date": "2026-11-07",
+      "ad_name": "UGC-Testimonial-v3",
+      "spend": 52.35,
+      "purchase_value": 192.65,
+      "impressions": 5737,
+      "clicks": 103,
+      "purchases": 10
+    },
+    {
+      "date": "2026-11-07",
+      "ad_name": "Static-Discount-20",
+      "spend": 45.6,
+      "purchase_value": 30.1,
+      "impressions": 3804,
+      "clicks": 32,
+      "purchases": 3
+    },
+    {
+      "date": "2026-11-07",
+      "ad_name": "Carousel-Features-v2",
+      "spend": 40.3,
+      "purchase_value": 66.9,
+      "impressions": 3700,
+      "clicks": 51,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-07",
+      "ad_name": "Video-Demo-30s",
+      "spend": 40.1,
+      "purchase_value": 50.93,
+      "impressions": 3795,
+      "clicks": 40,
+      "purchases": 3
+    },
+    {
+      "date": "2026-11-08",
+      "ad_name": "UGC-Testimonial-v3",
+      "spend": 54.8,
+      "purchase_value": 213.72,
+      "impressions": 5590,
+      "clicks": 114,
+      "purchases": 11
+    },
+    {
+      "date": "2026-11-08",
+      "ad_name": "Static-Discount-20",
+      "spend": 45.2,
+      "purchase_value": 24.86,
+      "impressions": 3622,
+      "clicks": 35,
+      "purchases": 2
+    },
+    {
+      "date": "2026-11-08",
+      "ad_name": "Carousel-Features-v2",
+      "spend": 40.15,
+      "purchase_value": 64.24,
+      "impressions": 3605,
+      "clicks": 46,
+      "purchases": 4
+    },
+    {
+      "date": "2026-11-08",
+      "ad_name": "Video-Demo-30s",
+      "spend": 39.85,
+      "purchase_value": 47.82,
+      "impressions": 3826,
+      "clicks": 43,
+      "purchases": 3
+    }
+  ]
+}

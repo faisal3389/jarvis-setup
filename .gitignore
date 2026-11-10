@@ -1,0 +1,44 @@
+# Secrets (ElevenLabs key written by `elevenlabs onboard` or copied from .env.example)
+.env
+.env.local
+.env*.local
+
+# Dependencies
+node_modules/
+
+# Runtime logs (keep the folders)
+logs/**
+!logs/manager/
+!logs/.gitkeep
+!logs/manager/.gitkeep
+
+# Runtime outputs (keep the folders)
+outbox/**/*
+!outbox/*/
+!outbox/*/.gitkeep
+queue/dev/*
+!queue/dev/.gitkeep
+workspace/*
+!workspace/.gitkeep
+
+# Runtime data files (recreated by `npm run setup` / `npm run reset`)
+data/scout.*
+data/operator.*
+data/advisor.*
+data/tasks.json
+data/tasks.js
+data/tasks-archive.json
+data/tasks.lock
+data/.jarvis-tmp-*
+data/.board-tmp-*
+
+# OS, Python and test leftovers
+.DS_Store
+__pycache__/
+*.pyc
+test-results/
+tests/output/
+playwright-report/
+
+# Claude Code per-machine settings
+.claude/settings.local.json

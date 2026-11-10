@@ -1,0 +1,8 @@
+{
+  "id": "email-001",
+  "receivedAt": "2026-11-08T14:22:10-05:00",
+  "from": "priya.natarajan@example.com",
+  "fromName": "Priya Natarajan",
+  "subject": "Can I export my notes to PDF or Markdown?",
+  "body": "Hi there!\n\nI've been using Acme Notes for all my thesis research and I'd like to get a copy of my notes out of the app, ideally as PDF, but Markdown would be even better so I can drop them into my writing tool. Is there a way to export? I couldn't find it.\n\nThanks so much,\nPriya"
+}

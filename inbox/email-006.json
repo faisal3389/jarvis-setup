@@ -1,0 +1,8 @@
+{
+  "id": "email-006",
+  "receivedAt": "2026-11-09T07:12:51-05:00",
+  "from": "kenji.mori@example.com",
+  "fromName": "Kenji Mori",
+  "subject": "When is the Android version coming out?",
+  "body": "Hi!\n\nMy wife uses Acme Notes on her iPhone and loves it. I'm on a Pixel and would love to use it too so we can share our grocery and travel lists. When is the Android version coming out? Is there a date yet?\n\nThanks,\nKenji"
+}

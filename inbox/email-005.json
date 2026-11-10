@@ -1,0 +1,8 @@
+{
+  "id": "email-005",
+  "receivedAt": "2026-11-09T06:02:15-05:00",
+  "from": "sofia.alvarez@example.com",
+  "fromName": "Sofia Alvarez",
+  "subject": "Your sync just lost a whole day of my notes",
+  "body": "I am honestly furious right now.\n\nI spent all of yesterday at a conference taking notes on my iPad in Acme Notes. This morning I opened the app on my iPhone and EVERYTHING from yesterday is gone. Now it's gone from the iPad too. Sync is the entire reason I use this app. A full day of work, just vanished.\n\nI need those notes back today. If this is how you treat loyal customers, I'm done with Acme Notes.\n\nSofia Alvarez"
+}

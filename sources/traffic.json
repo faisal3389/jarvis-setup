@@ -1,0 +1,77 @@
+{
+  "source": "App analytics (mock export)",
+  "exportedAt": "2026-11-09T05:00:00-05:00",
+  "timezone": "America/New_York",
+  "daily": [
+    {
+      "date": "2026-10-26",
+      "signups": 107,
+      "active_users": 5440
+    },
+    {
+      "date": "2026-10-27",
+      "signups": 109,
+      "active_users": 5390
+    },
+    {
+      "date": "2026-10-28",
+      "signups": 105,
+      "active_users": 5459
+    },
+    {
+      "date": "2026-10-29",
+      "signups": 99,
+      "active_users": 5444
+    },
+    {
+      "date": "2026-10-30",
+      "signups": 99,
+      "active_users": 5482
+    },
+    {
+      "date": "2026-10-31",
+      "signups": 102,
+      "active_users": 5411
+    },
+    {
+      "date": "2026-11-01",
+      "signups": 104,
+      "active_users": 5369
+    },
+    {
+      "date": "2026-11-02",
+      "signups": 112,
+      "active_users": 5470
+    },
+    {
+      "date": "2026-11-03",
+      "signups": 108,
+      "active_users": 5404
+    },
+    {
+      "date": "2026-11-04",
+      "signups": 115,
+      "active_users": 5449
+    },
+    {
+      "date": "2026-11-05",
+      "signups": 109,
+      "active_users": 5375
+    },
+    {
+      "date": "2026-11-06",
+      "signups": 106,
+      "active_users": 5482
+    },
+    {
+      "date": "2026-11-07",
+      "signups": 113,
+      "active_users": 5370
+    },
+    {
+      "date": "2026-11-08",
+      "signups": 151,
+      "active_users": 5452
+    }
+  ]
+}

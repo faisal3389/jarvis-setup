@@ -1,0 +1,8 @@
+{
+  "id": "email-008",
+  "receivedAt": "2026-11-09T08:30:27-05:00",
+  "from": "hannah.cole@example.com",
+  "fromName": "Hannah Cole",
+  "subject": "Team discount for 12 people?",
+  "body": "Hello,\n\nI run a small design studio, Bluefin Studio, and we'd like to move our whole team of 12 onto Acme Notes Pro on the annual plan. Could you do 40% off the annual plan for all 12 seats? We'd pay for everyone upfront.\n\nLooking forward to hearing from you,\nHannah Cole\nBluefin Studio"
+}

@@ -1,0 +1,8 @@
+{
+  "id": "email-007",
+  "receivedAt": "2026-11-09T07:48:09-05:00",
+  "from": "jonas.berg@example.com",
+  "fromName": "Jonas Berg",
+  "subject": "Bug: Export to PDF crashes the app",
+  "body": "Hi team,\n\nFound a reproducible crash. Export to PDF crashes the app on iOS 19.1, iPhone 16 Pro, Acme Notes 3.4.2. It only happens with notes that contain images; text-only notes export fine.\n\nSteps:\n1. Open a note with two or more photos in it\n2. Tap Share > Export > PDF\n3. The app closes immediately (no error message)\n\nHappens every time. Happy to send a screen recording or more details if that helps.\n\nJonas"
+}

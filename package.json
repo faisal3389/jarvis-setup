@@ -1,0 +1,22 @@
+{
+  "name": "jarvis-demo",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "description": "A local voice 'personal Jarvis' demo: a Jarvis page, a Claude Code Manager and four Claude Code workers on mock data.",
+  "scripts": {
+    "start": "node server.mjs",
+    "setup": "bash bin/setup.sh",
+    "reset": "bash bin/reset.sh",
+    "test": "node tests/run-all.mjs"
+  },
+  "engines": {
+    "node": ">=20.12"
+  },
+  "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.77.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.65.0"
+  }
+}

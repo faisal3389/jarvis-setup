@@ -1,0 +1,391 @@
+{
+  "source": "RevenueCat (mock export)",
+  "exportedAt": "2026-11-09T05:00:00-05:00",
+  "currency": "USD",
+  "daily": [
+    {
+      "date": "2026-10-01",
+      "revenue": 359.14,
+      "new_subscriptions": 18,
+      "cancellations": 6,
+      "active_subscriptions": 1855,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-02",
+      "revenue": 368.16,
+      "new_subscriptions": 18,
+      "cancellations": 9,
+      "active_subscriptions": 1864,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-03",
+      "revenue": 383.3,
+      "new_subscriptions": 16,
+      "cancellations": 10,
+      "active_subscriptions": 1870,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-04",
+      "revenue": 378.31,
+      "new_subscriptions": 21,
+      "cancellations": 10,
+      "active_subscriptions": 1881,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-05",
+      "revenue": 360.91,
+      "new_subscriptions": 20,
+      "cancellations": 10,
+      "active_subscriptions": 1891,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-06",
+      "revenue": 380.62,
+      "new_subscriptions": 21,
+      "cancellations": 5,
+      "active_subscriptions": 1907,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-07",
+      "revenue": 381.25,
+      "new_subscriptions": 21,
+      "cancellations": 9,
+      "active_subscriptions": 1919,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-08",
+      "revenue": 384.98,
+      "new_subscriptions": 16,
+      "cancellations": 5,
+      "active_subscriptions": 1930,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-09",
+      "revenue": 363.34,
+      "new_subscriptions": 17,
+      "cancellations": 5,
+      "active_subscriptions": 1942,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-10",
+      "revenue": 375.2,
+      "new_subscriptions": 14,
+      "cancellations": 6,
+      "active_subscriptions": 1950,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-10-11",
+      "revenue": 396.99,
+      "new_subscriptions": 15,
+      "cancellations": 5,
+      "active_subscriptions": 1960,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-12",
+      "revenue": 363.47,
+      "new_subscriptions": 14,
+      "cancellations": 8,
+      "active_subscriptions": 1966,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-13",
+      "revenue": 377.64,
+      "new_subscriptions": 16,
+      "cancellations": 5,
+      "active_subscriptions": 1977,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-14",
+      "revenue": 383.42,
+      "new_subscriptions": 20,
+      "cancellations": 5,
+      "active_subscriptions": 1992,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-15",
+      "revenue": 368.77,
+      "new_subscriptions": 17,
+      "cancellations": 5,
+      "active_subscriptions": 2004,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-16",
+      "revenue": 386.49,
+      "new_subscriptions": 18,
+      "cancellations": 10,
+      "active_subscriptions": 2012,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-10-17",
+      "revenue": 382.83,
+      "new_subscriptions": 21,
+      "cancellations": 8,
+      "active_subscriptions": 2025,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-10-18",
+      "revenue": 384.12,
+      "new_subscriptions": 19,
+      "cancellations": 10,
+      "active_subscriptions": 2034,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-19",
+      "revenue": 378.31,
+      "new_subscriptions": 20,
+      "cancellations": 10,
+      "active_subscriptions": 2044,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-20",
+      "revenue": 374.29,
+      "new_subscriptions": 17,
+      "cancellations": 9,
+      "active_subscriptions": 2052,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-21",
+      "revenue": 382.62,
+      "new_subscriptions": 18,
+      "cancellations": 7,
+      "active_subscriptions": 2063,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-10-22",
+      "revenue": 390.64,
+      "new_subscriptions": 17,
+      "cancellations": 9,
+      "active_subscriptions": 2071,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-10-23",
+      "revenue": 369.15,
+      "new_subscriptions": 18,
+      "cancellations": 8,
+      "active_subscriptions": 2081,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-24",
+      "revenue": 395.22,
+      "new_subscriptions": 16,
+      "cancellations": 7,
+      "active_subscriptions": 2090,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-25",
+      "revenue": 380.61,
+      "new_subscriptions": 14,
+      "cancellations": 5,
+      "active_subscriptions": 2099,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-10-26",
+      "revenue": 388.93,
+      "new_subscriptions": 19,
+      "cancellations": 7,
+      "active_subscriptions": 2111,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-10-27",
+      "revenue": 369.42,
+      "new_subscriptions": 18,
+      "cancellations": 7,
+      "active_subscriptions": 2122,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-28",
+      "revenue": 375.01,
+      "new_subscriptions": 17,
+      "cancellations": 10,
+      "active_subscriptions": 2129,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-10-29",
+      "revenue": 384.33,
+      "new_subscriptions": 19,
+      "cancellations": 8,
+      "active_subscriptions": 2140,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-30",
+      "revenue": 388.51,
+      "new_subscriptions": 20,
+      "cancellations": 5,
+      "active_subscriptions": 2155,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-10-31",
+      "revenue": 391.85,
+      "new_subscriptions": 17,
+      "cancellations": 7,
+      "active_subscriptions": 2165,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-11-01",
+      "revenue": 413.26,
+      "new_subscriptions": 19,
+      "cancellations": 8,
+      "active_subscriptions": 2176,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-11-02",
+      "revenue": 392.05,
+      "new_subscriptions": 17,
+      "cancellations": 8,
+      "active_subscriptions": 2185,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-11-03",
+      "revenue": 414.02,
+      "new_subscriptions": 16,
+      "cancellations": 8,
+      "active_subscriptions": 2193,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-11-04",
+      "revenue": 389.93,
+      "new_subscriptions": 19,
+      "cancellations": 7,
+      "active_subscriptions": 2205,
+      "billing_issues": 0
+    },
+    {
+      "date": "2026-11-05",
+      "revenue": 392.19,
+      "new_subscriptions": 17,
+      "cancellations": 5,
+      "active_subscriptions": 2217,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-11-06",
+      "revenue": 405.74,
+      "new_subscriptions": 19,
+      "cancellations": 6,
+      "active_subscriptions": 2230,
+      "billing_issues": 1
+    },
+    {
+      "date": "2026-11-07",
+      "revenue": 419.81,
+      "new_subscriptions": 16,
+      "cancellations": 9,
+      "active_subscriptions": 2237,
+      "billing_issues": 2
+    },
+    {
+      "date": "2026-11-08",
+      "revenue": 412.37,
+      "new_subscriptions": 23,
+      "cancellations": 9,
+      "active_subscriptions": 2251,
+      "billing_issues": 4
+    }
+  ],
+  "billing_issue_events": [
+    {
+      "event_id": "bi_20261106_01",
+      "date": "2026-11-06",
+      "occurredAt": "2026-11-06T04:12:33-05:00",
+      "customer_id": "rc_cus_2Wm8TqLz",
+      "email": "owen.hartley@example.com",
+      "product": "acme_pro_monthly",
+      "amount": 4.99,
+      "reason": "expired_card"
+    },
+    {
+      "event_id": "bi_20261107_01",
+      "date": "2026-11-07",
+      "occurredAt": "2026-11-07T02:47:10-05:00",
+      "customer_id": "rc_cus_9Ka3VbNe",
+      "email": "mira.solberg@example.com",
+      "product": "acme_pro_annual",
+      "amount": 39.99,
+      "reason": "card_declined"
+    },
+    {
+      "event_id": "bi_20261107_02",
+      "date": "2026-11-07",
+      "occurredAt": "2026-11-07T11:05:52-05:00",
+      "customer_id": "rc_cus_4Hx7PdRc",
+      "email": "theo.lindqvist@example.com",
+      "product": "acme_pro_monthly",
+      "amount": 4.99,
+      "reason": "insufficient_funds"
+    },
+    {
+      "event_id": "bi_20261108_01",
+      "date": "2026-11-08",
+      "occurredAt": "2026-11-08T01:58:14-05:00",
+      "customer_id": "rc_cus_7Qn2LmX9",
+      "email": "jade.okafor@example.com",
+      "product": "acme_pro_annual",
+      "amount": 39.99,
+      "reason": "card_declined"
+    },
+    {
+      "event_id": "bi_20261108_02",
+      "date": "2026-11-08",
+      "occurredAt": "2026-11-08T03:21:47-05:00",
+      "customer_id": "rc_cus_3Rf6YwKa",
+      "email": "felix.amar@example.com",
+      "product": "acme_pro_monthly",
+      "amount": 4.99,
+      "reason": "expired_card"
+    },
+    {
+      "event_id": "bi_20261108_03",
+      "date": "2026-11-08",
+      "occurredAt": "2026-11-08T09:40:05-05:00",
+      "customer_id": "rc_cus_8Td1GsVu",
+      "email": "nadia.brennan@example.com",
+      "product": "acme_pro_monthly",
+      "amount": 4.99,
+      "reason": "insufficient_funds"
+    },
+    {
+      "event_id": "bi_20261108_04",
+      "date": "2026-11-08",
+      "occurredAt": "2026-11-08T16:12:29-05:00",
+      "customer_id": "rc_cus_5Pj9ZcHo",
+      "email": "lucas.whitfield@example.com",
+      "product": "acme_pro_annual",
+      "amount": 39.99,
+      "reason": "card_declined"
+    }
+  ]
+}

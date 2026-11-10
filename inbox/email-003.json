@@ -1,0 +1,8 @@
+{
+  "id": "email-003",
+  "receivedAt": "2026-11-08T20:41:03-05:00",
+  "from": "lena.fischer@example.com",
+  "fromName": "Lena Fischer",
+  "subject": "New iPhone and my Pro is gone",
+  "body": "Hi,\n\nI just got a new iPhone and set it up from my backup. Acme Notes opened fine and all my notes are there, but the app now says I'm on the free version and Pro is gone. I'm using the same Apple ID as before. How do I get Pro back on the new phone?\n\nThanks,\nLena"
+}
