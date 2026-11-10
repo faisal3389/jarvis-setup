@@ -57,22 +57,30 @@ body.settled .panel{animation:none;opacity:1}
 .lbl{font-size:8.5px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
 .objective-h .val{font-size:13px;letter-spacing:.08em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase}
 .objective-h .val em{font-style:normal;color:var(--cyan2)}
-.pills{flex:none;display:flex;gap:6px}
-.pill{position:relative;display:grid;grid-template-columns:auto auto;align-items:center;column-gap:6px;border:1px solid var(--line);padding:3px 9px 3px 7px;font-size:9px;letter-spacing:.12em;white-space:nowrap;line-height:1.3;transition:box-shadow .4s,border-color .4s}
-.pill i{grid-row:1 / span 2;width:7px;height:7px;border-radius:50%;background:#33536b}
-.pill .pn{color:var(--text)}
+/* pills are generated from data/workers.js; each pill carries its worker colour as --wc */
+.pills{flex:none;display:grid;grid-auto-flow:column;grid-template-rows:auto;gap:6px;align-items:center}
+.pill{--wc:var(--cyan);position:relative;display:grid;grid-template-columns:auto auto;align-items:center;column-gap:6px;border:1px solid var(--line);padding:3px 9px 3px 7px;font-size:9px;letter-spacing:.12em;white-space:nowrap;line-height:1.3;transition:box-shadow .4s,border-color .4s}
+.pill i{grid-row:1 / span 2;width:7px;height:7px;border-radius:50%;background:color-mix(in srgb,var(--wc) 32%,#1a2a3a)}
+.pill .pn{color:var(--wc)}
 .pill .pv{font-size:7.5px;color:var(--muted)}
 .pill.mgr{border-color:var(--line2)} .pill.mgr .pn{color:var(--cyan2)}
 .pill .nb{position:absolute;top:-6px;right:-6px;min-width:15px;height:15px;padding:0 4px;border-radius:8px;background:var(--amber);color:#1d0f00;font:700 9px/15px var(--mono);letter-spacing:0;text-align:center;font-style:normal;box-shadow:0 0 9px rgba(255,181,71,.7)}
 .pill .nb[hidden]{display:none}
-.pill[data-s=working]{border-color:var(--cyan);animation:pillPulse 1.1s ease-in-out infinite}
-.pill[data-s=working] i{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
-.pill[data-s=working] .pv{color:var(--cyan)}
+.pill[data-s=working]{border-color:var(--wc);animation:pillPulse 1.1s ease-in-out infinite}
+.pill[data-s=working] i{background:var(--wc);box-shadow:0 0 8px var(--wc)}
+.pill[data-s=working] .pv{color:var(--wc)}
 .pill[data-s=needs]{border-color:rgba(255,181,71,.6)}
 .pill[data-s=needs] i{background:var(--amber);box-shadow:0 0 6px var(--amber)}
 .pill[data-s=needs] .pv{color:var(--amber)}
-.pill.flash{box-shadow:0 0 18px rgba(77,227,255,.8);border-color:var(--cyan2)}
-@keyframes pillPulse{50%{box-shadow:0 0 14px rgba(77,227,255,.55);background:rgba(77,227,255,.1)}}
+.pill.flash{box-shadow:0 0 18px color-mix(in srgb,var(--wc) 80%,transparent);border-color:var(--wc)}
+@keyframes pillPulse{50%{box-shadow:0 0 14px color-mix(in srgb,var(--wc) 55%,transparent);background:color-mix(in srgb,var(--wc) 10%,transparent)}}
+/* many workers: two rows of one-line pills (state = dot + border + glow, full state in the tooltip) */
+.pills.two{grid-auto-flow:row;grid-template-columns:repeat(var(--cols,5),auto);gap:5px 6px}
+.pills.two .pill{padding:1px 8px 1px 6px;column-gap:5px;line-height:1.35}
+.pills.two .pill i{grid-row:auto;width:6px;height:6px}
+.pills.two .pill .pv{display:none}
+.pills.two .pill .nb{top:-4px;right:-5px;min-width:12px;height:12px;padding:0 3px;border-radius:6px;font-size:8px;line-height:12px}
+.pills.two.tight .pill{padding:1px 6px 1px 5px;letter-spacing:.06em;font-size:8.5px}
 .clock{flex:none;text-align:right}
 #clk{font-size:18px;letter-spacing:.1em;color:var(--cyan2);line-height:1.1}
 
@@ -213,9 +221,7 @@ button.brief:hover{background:var(--cyan2)}
 /* ---------- telemetry ---------- */
 .tl-row{display:flex;gap:7px;font-size:9.5px;padding:1px 0;white-space:nowrap}
 .tl-row .tt{color:var(--dim);flex:none}
-.tl-row .tr{flex:none;width:96px;letter-spacing:.03em;overflow:hidden;text-overflow:ellipsis}
-.r-scout .tr{color:var(--cyan)} .r-operator .tr{color:var(--violet)} .r-advisor .tr{color:var(--green)}
-.r-developer .tr{color:var(--teal)} .r-researcher .tr{color:var(--pink)} .r-note .tr{color:var(--amber)}
+.tl-row .tr{flex:none;width:96px;letter-spacing:.03em;overflow:hidden;text-overflow:ellipsis;color:var(--wc,var(--muted))}
 .tl-row .tmsg{overflow:hidden;text-overflow:ellipsis;color:var(--text)}
 .tl-row.r-note .tmsg{color:var(--cyan2)}
 .tl-row.hot .tmsg{color:var(--red)}
@@ -283,7 +289,7 @@ button.brief:hover{background:var(--cyan2)}
 .tk{margin:5px 0 0 12px;padding:3px 0 4px 8px;border-left:2px solid var(--tc,rgba(77,227,255,.3))}
 .tk-h{display:flex;align-items:baseline;gap:5px;font-size:10px}
 .tk-h .tid{flex:none;color:var(--cyan2)}
-.tk-h .tw{flex:none;font-size:8.5px;letter-spacing:.12em;color:var(--wc,var(--cyan))}
+.tk-h .tw{flex:none;font-size:8.5px;letter-spacing:.12em;color:var(--wc,#8fa6ba)}
 .tk-h .dot{flex:none;color:var(--dim)}
 .tk-h .ttl{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
 .tk-r{font-size:9.5px;color:var(--muted);line-height:1.35;margin-top:1px}
@@ -300,7 +306,6 @@ button:disabled{opacity:.45;cursor:default}
 .tk.s-needs_you{--tc:var(--amber)} .tk.s-working,.tk.s-approved{--tc:var(--cyan)} .tk.s-review{--tc:var(--violet)}
 .tk.s-done{--tc:rgba(60,245,166,.45)} .tk.s-failed{--tc:var(--red)}
 .tk.s-cancelled{--tc:var(--dim);opacity:.6} .tk.s-cancelled .ttl{text-decoration:line-through;color:var(--dim)}
-.w-scout{--wc:var(--cyan)} .w-operator{--wc:var(--violet)} .w-developer{--wc:var(--teal)} .w-researcher{--wc:var(--pink)}
 .rq-done{display:flex;align-items:center;gap:7px;padding:3px 2px;opacity:.5;border-bottom:1px dashed rgba(77,227,255,.12);cursor:pointer;white-space:nowrap;font-size:10px}
 .rq-done:hover{opacity:.8}
 .rq-done .rtx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px}
@@ -373,13 +378,7 @@ button:disabled{opacity:.45;cursor:default}
     <div class="badge" id="mockBadge">MOCK DATA · ACME NOTES</div>
     <div class="badge fx" id="fxBadge" hidden>FIXTURES</div>
     <div class="objective-h"><div class="lbl">Current objective</div><div class="val" id="hObj">—</div></div>
-    <div class="pills">
-      <div class="pill mgr" id="pill-manager" data-s="idle"><i></i><span class="pn">MANAGER</span><span class="pv">IDLE</span><em class="nb" hidden></em></div>
-      <div class="pill" id="pill-scout" data-s="idle"><i></i><span class="pn">SCOUT</span><span class="pv">IDLE</span><em class="nb" hidden></em></div>
-      <div class="pill" id="pill-operator" data-s="idle"><i></i><span class="pn">OPERATOR</span><span class="pv">IDLE</span><em class="nb" hidden></em></div>
-      <div class="pill" id="pill-developer" data-s="idle"><i></i><span class="pn">DEVELOPER</span><span class="pv">IDLE</span><em class="nb" hidden></em></div>
-      <div class="pill" id="pill-researcher" data-s="idle"><i></i><span class="pn">RESEARCHER</span><span class="pv">IDLE</span><em class="nb" hidden></em></div>
-    </div>
+    <div class="pills" id="pills" role="list" aria-label="Manager and workers"></div>
     <div class="clock"><div id="clk">--:--:--</div><div class="lbl" id="clkDate">---</div></div>
   </header>
 
@@ -463,11 +462,9 @@ button:disabled{opacity:.45;cursor:default}
   var params = new URLSearchParams(location.search);
   var FIXTURES = params.get('fixtures') === '1';
   var BASE = FIXTURES ? 'fixtures/' : '../data/';
-  var FILES = ['base', 'schedules', 'scout', 'operator', 'advisor', 'tasks'];
+  var FILES = ['base', 'schedules', 'scout', 'operator', 'advisor', 'tasks', 'workers'];
   var FILE_KEY = { tasks: 'board' }; // tasks.js sets window.JARVIS.board
-  var ROLES = ['scout', 'operator', 'advisor'];
-  var WORKERS = ['scout', 'operator', 'developer', 'researcher'];
-  var PILLS = ['manager'].concat(WORKERS);
+  var ROLES = ['scout', 'operator', 'advisor']; // the report files (data/<role>.js), not the worker list
   var POLL_MS = 3000;
   window.JARVIS = window.JARVIS || {};
 
@@ -513,7 +510,7 @@ button:disabled{opacity:.45;cursor:default}
       var J = window.JARVIS || {};
       var snap;
       try {
-        snap = JSON.stringify({ b: J.base || null, s: J.schedules || null, sc: J.scout || null, op: J.operator || null, ad: J.advisor || null, bd: J.board || null, m: missing });
+        snap = JSON.stringify({ b: J.base || null, s: J.schedules || null, sc: J.scout || null, op: J.operator || null, ad: J.advisor || null, bd: J.board || null, w: J.workers || null, m: missing });
       } catch (e) { snap = String(Math.random()); }
       loadedOnce = true;
       if (snap !== lastSnap) { lastSnap = snap; render(); }
@@ -530,6 +527,46 @@ button:disabled{opacity:.45;cursor:default}
     return (s === 'idle' || s === 'running' || s === 'done' || s === 'error') ? s : 'idle';
   }
   function base() { return obj((window.JARVIS || {}).base); }
+
+  // ---- workers (data/workers.js → window.JARVIS.workers, generated by server.mjs from workers.json) ----
+  // Order in the file = order on the page. The built-in list below is ONLY the offline fallback, used when
+  // data/workers.js cannot load (file://, server down) or holds no valid worker.
+  var FALLBACK_WORKERS = [
+    { id: 'scout', label: 'SCOUT', color: '#4de3ff', summary: 'Numbers and analysis from the business data in sources/. Read-only.' },
+    { id: 'operator', label: 'OPERATOR', color: '#b892ff', summary: 'Inbox sweeps and drafts of emails, replies and posts; simulated send or publish only after you approve.' },
+    { id: 'developer', label: 'DEVELOPER', color: '#5cf0d8', summary: 'Small self-contained python3 scripts and checks, built only inside workspace/task-<id>/.' },
+    { id: 'researcher', label: 'RESEARCHER', color: '#ff8fd0', summary: 'Web research with every claim cited by URL and date; anything unconfirmed is marked UNVERIFIED.' },
+    { id: 'tester', label: 'TESTER', color: '#b6f25e', summary: "Checks other workers' output (runs code, tries edge cases, verifies numbers) and writes PASS/FAIL; never fixes it." }
+  ];
+  var MANAGER = { id: 'manager', label: 'MANAGER', color: '#4de3ff', summary: 'Plans each request, hands tasks to the workers and reports back.' };
+  var NEUTRAL = '#8fa6ba'; // unknown worker ids (e.g. old board tasks)
+  var HEX_RE = /^#[0-9a-f]{6}$/i, WID_RE = /^[a-z][a-z0-9_-]{0,31}$/;
+  var wCache = { raw: undefined, list: FALLBACK_WORKERS, registry: false };
+  function workers() {
+    var raw = (window.JARVIS || {}).workers;
+    if (raw === wCache.raw) return wCache.list;
+    var seen = {}, list = arr(raw).map(obj).filter(Boolean).map(function (w) {
+      var id = String(w.id == null ? '' : w.id).trim().toLowerCase(), c = String(w.color || '').trim();
+      if (!WID_RE.test(id) || id === 'manager' || seen[id]) return null;
+      seen[id] = 1;
+      return {
+        id: id,
+        label: (String(w.label || '').trim() || id).toUpperCase().slice(0, 12),
+        color: HEX_RE.test(c) ? c.toLowerCase() : NEUTRAL,
+        summary: String(w.summary || '').trim()
+      };
+    }).filter(Boolean);
+    wCache = { raw: raw, list: list.length ? list : FALLBACK_WORKERS, registry: list.length > 0 };
+    return wCache.list;
+  }
+  function workerIds() { return workers().map(function (w) { return w.id; }); }
+  // A worker's look; unknown ids still render (neutral colour, uppercase id).
+  function workerOf(id) {
+    id = String(id || '').trim().toLowerCase();
+    var w = workers().filter(function (x) { return x.id === id; })[0];
+    return w || { id: id, label: (id || 'task').toUpperCase(), color: NEUTRAL, summary: '', unknown: true };
+  }
+  function safeCls(s) { return String(s || '').toLowerCase().replace(/[^a-z0-9_-]/g, ''); }
   function business() { var b = base(); return (b && b.business) || 'Acme Notes'; }
 
   // ---- task board (data/tasks.js → window.JARVIS.board) ----
@@ -559,7 +596,7 @@ button:disabled{opacity:.45;cursor:default}
       working = bReqs().some(function (r) { return r.status === 'queued' || r.status === 'planning' || r.status === 'working'; }) || status('advisor') === 'running';
       needs = ts.filter(function (t) { return t.status === 'needs_you'; }).length;
     } else {
-      var mine = ts.filter(function (t) { return String(t.worker || '').toLowerCase() === w; });
+      var mine = ts.filter(function (t) { return String(t.worker || '').trim().toLowerCase() === w; });
       working = mine.some(function (t) { return t.status === 'working' || t.status === 'approved'; }) || (ROLES.indexOf(w) >= 0 && status(w) === 'running');
       needs = mine.filter(function (t) { return t.status === 'needs_you'; }).length;
     }
@@ -657,15 +694,47 @@ button:disabled{opacity:.45;cursor:default}
       ps.className = 'ps s-' + s;
       ps.textContent = s.toUpperCase() + (s === 'done' && u ? ' · ' + hms(u).slice(0, 5) : '');
     });
-    PILLS.forEach(function (w) {
-      var st = pillState(w), pill = $('pill-' + w); if (!pill) return;
+    var built = buildPills();
+    [MANAGER].concat(workers()).forEach(function (w) {
+      var st = pillState(w.id), pill = $('pill-' + w.id); if (!pill) return;
       pill.setAttribute('data-s', st.s);
       pill.querySelector('.pv').textContent = st.s === 'working' ? 'WORKING' : st.s === 'needs' ? 'NEEDS YOU' : 'IDLE';
       var nb = pill.querySelector('.nb');
       nb.hidden = !st.needs; nb.textContent = st.needs ? String(st.needs) : '';
-      pill.title = cap(w) + ': ' + (st.s === 'working' ? 'working' : 'idle') + (st.needs ? ' · ' + st.needs + ' task' + (st.needs > 1 ? 's' : '') + ' need you' : '');
+      pill.title = w.label + ' · ' + (st.s === 'working' ? 'WORKING' : 'IDLE') + (st.needs ? ' · ' + st.needs + ' task' + (st.needs > 1 ? 's' : '') + ' need you' : '') + (w.summary ? '\n' + w.summary : '');
     });
+    if (built || fitStale) fitPills();
   }
+
+  // Header pills: MANAGER first, then every worker in file order. Rebuilt only when the list changes.
+  var pillSig = null, fitStale = true;
+  function buildPills() {
+    var list = [MANAGER].concat(workers());
+    var sig = (wCache.registry ? 'r' : 'f') + JSON.stringify(list);
+    if (sig === pillSig) return false;
+    pillSig = sig;
+    var box = $('pills');
+    box.setAttribute('data-src', wCache.registry ? 'registry' : 'fallback');
+    box.title = wCache.registry ? '' : 'Built-in worker list (data/workers.js did not load)';
+    box.innerHTML = list.map(function (w) {
+      return '<div class="pill' + (w === MANAGER ? ' mgr' : '') + '" role="listitem" id="pill-' + esc(w.id) + '" data-w="' + esc(w.id) + '" data-s="idle" style="--wc:' + esc(w.color) + '">' +
+        '<i></i><span class="pn">' + esc(w.label) + '</span><span class="pv">IDLE</span><em class="nb" hidden></em></div>';
+    }).join('');
+    return true;
+  }
+  // One row of two-line pills while the objective keeps room; else two rows of one-line pills.
+  var MIN_OBJ_W = 200;
+  function fitPills() {
+    var box = $('pills'), top = $('p-top'), ob = top && top.querySelector('.objective-h');
+    if (!box || !ob) return;
+    fitStale = false;
+    box.classList.remove('two', 'tight');
+    if (ob.getBoundingClientRect().width >= MIN_OBJ_W && top.scrollWidth <= top.clientWidth + 1) return;
+    box.style.setProperty('--cols', String(Math.ceil(box.children.length / 2))); // row-major: reads in file order
+    box.classList.add('two');
+    if (ob.getBoundingClientRect().width < 80 || top.scrollWidth > top.clientWidth + 1) box.classList.add('tight');
+  }
+  window.addEventListener('resize', function () { fitStale = true; fitPills(); });
 
   function updateLink() {
     var el = $('linkState');
@@ -817,29 +886,31 @@ button:disabled{opacity:.45;cursor:default}
   function teleHtml() {
     var rows = [];
     ROLES.forEach(function (r) {
+      // report logs: a registered worker's report uses its colour + label; the advisor (not a worker) stays green
+      var w = workerOf(r), c = w.unknown ? (r === 'advisor' ? 'var(--green)' : NEUTRAL) : w.color;
       arr(role(r) && role(r).log).forEach(function (e, i) {
         e = obj(e); if (!e) return;
-        rows.push({ r: r, tag: r.toUpperCase(), t: e.t, msg: e.msg, i: i, ts: Date.parse(e.t) || 0 });
+        rows.push({ r: r, c: c, tag: w.unknown ? r.toUpperCase() : w.label, t: e.t, msg: e.msg, i: i, ts: Date.parse(e.t) || 0 });
       });
     });
-    // task log lines: "T4 SCOUT › …"
+    // task log lines: "T4 SCOUT › …" in the worker's colour
     bTasks().forEach(function (t) {
-      var w = String(t.worker || 'task').toLowerCase();
+      var w = workerOf(t.worker);
       arr(t.log).forEach(function (e, i) {
         e = obj(e); if (!e) return;
-        rows.push({ r: WORKERS.indexOf(w) >= 0 ? w : 'scout', tag: 'T' + t.id + ' ' + w.toUpperCase() + ' ›', t: e.t, msg: e.msg, i: i, ts: Date.parse(e.t) || 0 });
+        rows.push({ r: safeCls(w.id) || 'task', c: w.color, tag: 'T' + t.id + ' ' + w.label + ' ›', t: e.t, msg: e.msg, i: i, ts: Date.parse(e.t) || 0 });
       });
     });
     // board notes (what Jarvis says)
     bNotes().forEach(function (n, i) {
-      rows.push({ r: 'note', tag: 'NOTE ›', t: n.t, msg: n.text, i: i, ts: Date.parse(n.t) || 0 });
+      rows.push({ r: 'note', c: 'var(--amber)', tag: 'NOTE ›', t: n.t, msg: n.text, i: i, ts: Date.parse(n.t) || 0 });
     });
     rows.sort(function (x, y) { return (y.ts - x.ts) || (y.i - x.i); });
     $('ps-tele').textContent = rows.length ? rows.length + ' EVENTS' : '';
     if (!rows.length) return '<div class="await"><b>NO TELEMETRY YET</b><span>AWAITING FIRST RUN</span></div>';
     return rows.slice(0, 100).map(function (x) {
       var hot = x.r !== 'note' && /urgent|error|fail/i.test(String(x.msg || ''));
-      return '<div class="tl-row r-' + x.r + (hot ? ' hot' : '') + '" title="' + esc((x.t || '') + ' · ' + x.tag + ' ' + x.msg) + '"><span class="tt">' + esc(hms(x.t)) + '</span><span class="tr">' + esc(x.tag) + '</span><span class="tmsg">' + esc(x.msg) + '</span></div>';
+      return '<div class="tl-row r-' + x.r + (hot ? ' hot' : '') + '" style="--wc:' + esc(x.c) + '" title="' + esc((x.t || '') + ' · ' + x.tag + ' ' + x.msg) + '"><span class="tt">' + esc(hms(x.t)) + '</span><span class="tr">' + esc(x.tag) + '</span><span class="tmsg">' + esc(x.msg) + '</span></div>';
     }).join('');
   }
 
@@ -898,9 +969,9 @@ button:disabled{opacity:.45;cursor:default}
   var pendingBtn = {};    // "approve:5" while the API call is in flight
   function chip(s) { return '<span class="chip c-' + esc(String(s || 'queued').replace(/[^a-z_]/g, '')) + '">' + esc(stLabel(s)) + '</span>'; }
   function taskHtml(t) {
-    var s = String(t.status || 'queued'), w = String(t.worker || '').toLowerCase();
-    var h = '<div class="tk s-' + esc(s) + ' w-' + esc(w) + '" title="' + esc([t.title, t.detail, arr(t.files).join(', ')].filter(Boolean).join(' · ')) + '">' +
-      '<div class="tk-h"><span class="tid">T' + esc(t.id) + '</span><span class="dot">·</span><span class="tw">' + esc(w.toUpperCase() || 'TASK') + '</span><span class="dot">·</span><span class="ttl">' + esc(t.title) + '</span>' + chip(s) + '</div>';
+    var s = String(t.status || 'queued'), w = workerOf(t.worker);
+    var h = '<div class="tk s-' + esc(safeCls(s)) + '" data-w="' + esc(w.id) + '" style="--wc:' + esc(w.color) + '" title="' + esc([t.title, t.detail, arr(t.files).join(', ')].filter(Boolean).join(' · ')) + '">' +
+      '<div class="tk-h"><span class="tid">T' + esc(t.id) + '</span><span class="dot">·</span><span class="tw" title="' + esc(w.summary || w.label) + '">' + esc(w.label) + '</span><span class="dot">·</span><span class="ttl">' + esc(t.title) + '</span>' + chip(s) + '</div>';
     if (t.result) h += '<div class="tk-r clamp2"><b>RESULT</b>' + esc(t.result) + '</div>';
     else if (s === 'working' || s === 'approved') { var ll = lastLog(t); if (ll) h += '<div class="tk-log">› ' + esc(ll) + '</div>'; }
     else if (s === 'queued' && arr(t.dependsOn).length) h += '<div class="tk-r"><b>WAITS ON</b>' + arr(t.dependsOn).map(function (d) { return 'T' + esc(d); }).join(', ') + '</div>';
@@ -952,11 +1023,11 @@ button:disabled{opacity:.45;cursor:default}
   }
   function crewHtml() {
     var ts = bTasks();
-    return WORKERS.map(function (w) {
-      var st = pillState(w), mine = ts.filter(function (t) { return String(t.worker || '').toLowerCase() === w; }).sort(function (a, b) { return idNum(b.id) - idNum(a.id); });
+    return workers().map(function (w) {
+      var st = pillState(w.id), mine = ts.filter(function (t) { return String(t.worker || '').trim().toLowerCase() === w.id; }).sort(function (a, b) { return idNum(b.id) - idNum(a.id); });
       var cur = mine.filter(function (t) { return t.status === 'working' || t.status === 'approved'; })[0] || mine.filter(function (t) { return t.status === 'needs_you'; })[0];
       var txt = cur ? 'T' + cur.id + ' · ' + cur.title : mine[0] ? 'last: T' + mine[0].id + ' ' + stLabel(mine[0].status).toLowerCase() : 'no tasks yet';
-      return '<span class="cn w-' + w + '" style="--wc:var(--' + ({ scout: 'cyan', operator: 'violet', developer: 'teal', researcher: 'pink' })[w] + ')">' + w.toUpperCase() + '</span>' +
+      return '<span class="cn" data-w="' + esc(w.id) + '" style="--wc:' + esc(w.color) + '" title="' + esc(w.summary || w.label) + '">' + esc(w.label) + '</span>' +
         '<span class="cs ' + st.s + '">' + (st.s === 'working' ? 'WORKING' : st.s === 'needs' ? 'WAITING ON YOU' : 'IDLE') + '</span><span class="ct" title="' + esc(txt) + '">' + esc(txt) + '</span>';
     }).join('');
   }
@@ -991,7 +1062,7 @@ button:disabled{opacity:.45;cursor:default}
       }
       prevStatus[r] = s;
     });
-    PILLS.forEach(function (w) {
+    ['manager'].concat(workerIds()).forEach(function (w) {
       var s = pillState(w).s;
       if (!firstRender && prevPill[w] !== s && s === 'working') flash('pill-' + w);
       prevPill[w] = s;
@@ -1728,8 +1799,11 @@ button:disabled{opacity:.45;cursor:default}
     }, function () { return null; }).then(function (j) { clearTimeout(timer); return j; });
   }
   // "→ MANAGER · request 4", "✓ APPROVED · task 5", "✕ CANCELLED · task 3" — what the server actually did.
+  // Action types the page shows as plain replies (no action line, no board reload).
+  var QUIET_ACTIONS = { none: 1, launch_agent: 1 };
+  function actionType(res) { var a = obj(res && res.action), t = a ? String(a.type || 'none') : 'none'; return QUIET_ACTIONS[t] ? 'none' : t; }
   function actionLine(res) {
-    var a = obj(res && res.action), type = a ? String(a.type || 'none') : 'none';
+    var a = obj(res && res.action), type = actionType(res);
     if (type === 'none') return '';
     function n(x) { return x != null && x !== '' ? String(x) : '?'; }
     var target = a.request != null ? 'request ' + n(a.request) : 'task ' + n(a.task);
@@ -1768,7 +1842,7 @@ button:disabled{opacity:.45;cursor:default}
       var say = String(res.say).trim();
       showExchange(q, say, { action: actionLine(res) });
       speakReply(say);
-      if (obj(res.action) && res.action.type && res.action.type !== 'none') loadSoon();
+      if (actionType(res) !== 'none') loadSoon();
     }).catch(function () {
       return localAnswer(q, from, true);
     }).then(function () {

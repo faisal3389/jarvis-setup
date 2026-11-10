@@ -61,7 +61,7 @@ Leave this terminal open. Then open **http://127.0.0.1:4777/** in Chrome.
 |---|---|
 | "Jarvis, hello" | Jarvis answers by itself in about 2 seconds. |
 | "Jarvis, please run the morning check." | The Manager runs Scout and Operator, then gives you the top 3. Start with this one. |
-| "Jarvis, find out why signups jumped and draft a tweet about it." | Two tasks go on the board. The tweet waits for you. |
+| "Jarvis, find out why signups jumped and draft a tweet about it." | Three tasks go on the board: the analysis, the tweet, and a check of its numbers. The tweet waits for you. |
 | "Jarvis, approve 2" | Finishes a waiting task. Use the real task number. |
 | "Jarvis, what's on the board?" | Jarvis answers from the board. |
 | "Jarvis, cancel 3" / "reject 2" / "clear the board" | Changes the board. |
@@ -85,6 +85,35 @@ npm test          # page tests, all calls mocked, no tokens used
 On a Mac without Playwright's own browser, point the tests at a Chromium build:
 `PLAYWRIGHT_CHROMIUM_PATH="/path/to/Chromium" npm test`, or run `npx playwright install chromium` once.
 
+## Add a new worker
+The workers are listed in `workers.json` (scout, operator, developer, researcher, tester). To add one:
+1. Create `.claude/agents/<id>.md`. Copy `.claude/agents/tester.md` (a read-only checker) or
+   `.claude/agents/developer.md` (writes code), then change `name: <id>`, `description`, `tools`
+   and the body. Keep the worker protocol: status working, task-log lines, output file, status review.
+2. Add one entry to `workers.json`. The order in the file is the order on the page.
+   - `id`: lowercase, 2 to 24 letters, digits or dashes. Must equal the file name and its `name:`.
+   - `label`: the UPPERCASE name on the page, at most 12 characters.
+   - `color`: a hex colour `#rrggbb` for its pill, board chip and telemetry.
+   - `summary`: one sentence on what it does. The Manager, the Jarvis brain and the page tooltip read it.
+   - `output`: its output folder inside `outbox/` (or `queue/`, `workspace`). `npm run reset` creates and empties it.
+   - `extraBash`: extra allow rules for Manager runs, for example `["Bash(npm test*)"]`.
+     Keep it `[]`. **Every rule widens what every worker may run**, not only the new one.
+3. Restart the server (`Ctrl + C`, then `npm start`) and reload the page. The terminal warns if a
+   worker has no agent file or its `name:` does not match.
+
+## Mission Control agent: change Jarvis itself
+To change Jarvis (the page, its voice, the server, the workers), use the Mission Control agent: a
+Claude Code session in the project folder that **asks before every change**.
+- Say **"Jarvis, launch mission control agent"**. On a Mac a new Terminal window opens with the agent.
+  The first time, macOS asks whether the server may control Terminal: click **Allow**. If the agent is
+  already open, Jarvis brings Terminal to the front.
+- Or open a terminal in the project folder and run `npm run agent` (works on any computer).
+- Type what you want changed. The agent says its plan, asks before each edit or command, and checks
+  its work.
+- After server changes it runs `npm run restart`, which restarts the Jarvis server safely. The server
+  then runs in the background and writes to `logs/server.log` (your `npm start` terminal stops). If you
+  use another port, run `JARVIS_PORT=4780 npm run restart`.
+
 ## Costs
 - Each sentence to the Jarvis brain (Haiku): a fraction of a cent.
 - Each work request to the Manager (Sonnet): about $0.30.
@@ -94,7 +123,8 @@ On a Mac without Playwright's own browser, point the tests at a Chromium build:
 | Goal | Command |
 |---|---|
 | Clear the board and all results | `npm run reset` |
-| Stop Jarvis | press `Ctrl + C` in the `npm start` terminal |
+| Restart Jarvis (after a change) | `npm run restart` |
+| Stop Jarvis | press `Ctrl + C` in the `npm start` terminal (after `npm run restart` it runs in the background: `kill $(lsof -ti tcp:4777 -sTCP:LISTEN)`) |
 | See past Manager runs | `claude --resume` in the project folder |
 | Remove everything | stop Jarvis, remove the clock lines, delete your ElevenLabs key in ElevenLabs → Settings → API Keys, then delete the folder |
 

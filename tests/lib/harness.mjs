@@ -15,6 +15,30 @@ const FIXTURES_DIR = path.join(ROOT, 'mission-control', 'fixtures');
 
 export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/* ------------------------------------------------------------------ worker registry */
+function evalJarvisFile(file) {
+  const win = {};
+  new Function('window', fs.readFileSync(file, 'utf8'))(win);
+  return win.JARVIS || {};
+}
+// The workers the page should see in normal mode: $P/workers.json (Builder R's registry) when it exists and
+// parses, else mission-control/fixtures/workers.js.
+export function registryWorkers() {
+  const reg = path.join(ROOT, 'workers.json');
+  if (fs.existsSync(reg)) {
+    try {
+      const j = JSON.parse(fs.readFileSync(reg, 'utf8'));
+      if (Array.isArray(j.workers) && j.workers.length) return j.workers;
+    } catch (e) { console.warn('harness: workers.json is not valid JSON, using fixtures/workers.js:', e.message); }
+  }
+  return fixtureWorkers();
+}
+export function fixtureWorkers() { return JSON.parse(JSON.stringify(evalJarvisFile(path.join(FIXTURES_DIR, 'workers.js')).workers)); }
+// Same shape as server.mjs's virtual GET /data/workers.js.
+export function workersJs(list) {
+  return 'window.JARVIS = window.JARVIS || {};\nwindow.JARVIS.workers = ' + JSON.stringify(list, null, 2) + ';\n';
+}
+
 /* ------------------------------------------------------------------ static server */
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.json': 'application/json', '.css': 'text/css', '.png': 'image/png', '.svg': 'image/svg+xml' };
 
@@ -24,6 +48,11 @@ export async function startStaticServer() {
     try { p = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch { res.writeHead(400); return res.end(); }
     if (p === '/') { res.writeHead(302, { Location: '/mission-control/index.html' }); return res.end(); }
     if (p === '/favicon.ico') { res.writeHead(204); return res.end(); }
+    // virtual, like server.mjs: generated on every request from workers.json (or the fixture list)
+    if (p === '/data/workers.js') {
+      res.writeHead(200, { 'Content-Type': TYPES['.js'], 'Cache-Control': 'no-store' });
+      return res.end(workersJs(registryWorkers()));
+    }
     const m = /^\/(mission-control|data)(\/|$)/.exec(p);
     if (!m) { res.writeHead(404, { 'Content-Type': 'application/json' }); return res.end('{"ok":false,"error":"not served by the test server"}'); }
     let abs = path.join(ROOT, path.normalize(p));
@@ -154,7 +183,8 @@ export function fixtureBoard() {
 
 /**
  * Opens the Jarvis page in a fresh context.
- * opts: fixtures (bool) · board (object served as data/tasks.js) · viewport · voice ('browser'|'elevenlabs')
+ * opts: fixtures (bool) · board (object served as data/tasks.js) · workers (array served as workers.js; null = 404)
+ *       viewport · voice ('browser'|'elevenlabs')
  *       sr ('silent'|'network') · api ({'/api/x': handler}) · file (open via file://) · boot (default true)
  * A handler gets {body, call, n, voice} and returns a JSON object, {status, json}, {status, body, contentType} or {abort: true}.
  */
@@ -186,10 +216,19 @@ export async function openJarvis(browser, baseUrl, opts = {}) {
     return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(r == null ? {} : r) });
   });
 
+  // opts.workers: an array → served as workers.js (data/ or fixtures/), null → 404 (the page's fallback list).
+  // Without it, normal mode gets the registry list (workers.json, else the fixture list).
+  const serveWorkers = (route) => {
+    if (opts.workers === null) return route.fulfill({ status: 404, body: '' });
+    return route.fulfill({ status: 200, contentType: 'text/javascript', body: workersJs(opts.workers || registryWorkers()) });
+  };
+  if (opts.fixtures && opts.workers !== undefined) await context.route(/\/fixtures\/workers\.js(\?.*)?$/, serveWorkers);
+
   // Live data: serve the (stable) fixture files as ../data/*.js so tests don't depend on the demo's state.
   if (!opts.fixtures && !opts.realData) {
     await context.route(/\/data\/(\w+)\.js(\?.*)?$/, async (route) => {
       const name = /\/data\/(\w+)\.js/.exec(route.request().url())[1];
+      if (name === 'workers') return serveWorkers(route);
       if (name === 'tasks' && opts.board !== undefined) {
         if (opts.board === null) return route.fulfill({ status: 404, body: '' });
         return route.fulfill({ status: 200, contentType: 'text/javascript', body: 'window.JARVIS = window.JARVIS || {};\nwindow.JARVIS.board = ' + JSON.stringify(opts.board) + ';\n' });
@@ -238,11 +277,11 @@ export async function openJarvis(browser, baseUrl, opts = {}) {
       await page.press('#q', 'Enter');
     },
     async screenshot(name) {
-      fs.mkdirSync(OUT_DIR, { recursive: true });
-      const file = path.join(OUT_DIR, name);
+      const file = J.outPath(name);
       await page.screenshot({ path: file });
       return file;
     },
+    outPath(name) { fs.mkdirSync(OUT_DIR, { recursive: true }); return path.join(OUT_DIR, name); },
     close: () => context.close()
   };
   if (opts.boot !== false) await J.boot();

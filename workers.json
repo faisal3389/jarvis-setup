@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "workers": [
+    {"id": "scout", "label": "SCOUT", "color": "#4de3ff",
+     "summary": "Numbers and analysis from the business data in sources/, and the morning daily report. Read-only.",
+     "output": "outbox/analysis", "extraBash": []},
+    {"id": "operator", "label": "OPERATOR", "color": "#b892ff",
+     "summary": "Inbox sweep; drafts emails, replies, posts and tweets; the simulated send or publish after approval.",
+     "output": "outbox/drafts", "extraBash": []},
+    {"id": "developer", "label": "DEVELOPER", "color": "#5cf0d8",
+     "summary": "Small self-contained python3 code tasks in workspace/task-<id>/, and triage of bug tickets in queue/dev/.",
+     "output": "workspace", "extraBash": []},
+    {"id": "researcher", "label": "RESEARCHER", "color": "#ff8fd0",
+     "summary": "Read-only public web research; every fact cited with its URL and access date.",
+     "output": "outbox/research", "extraBash": []},
+    {"id": "tester", "label": "TESTER", "color": "#b6f25e",
+     "summary": "Checks another worker's task, never fixes it: runs code and edge cases, verifies numbers against sources/.",
+     "output": "outbox/tests", "extraBash": []}
+  ]
+}

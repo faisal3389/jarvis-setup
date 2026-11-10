@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """board.py — the only writer of data/tasks.json and data/tasks.js (Jarvis v2 task board).
 
-Stdlib only. See ../docs/CONTRACT-v2.md. Prints JSON. Bad input: exit 2 and {"error": "..."}.
+Stdlib only. See ../docs/CONTRACT-v2.md (board) and ../docs/CONTRACT-v4.md (workers.json).
+Prints JSON. Bad input: exit 2 and {"error": "..."}. Worker ids come from ../workers.json.
 
   request-add --text "..." --from voice|text|clock
   request-set <rid> [--status S] [--reply "..."]
@@ -16,12 +17,14 @@ Stdlib only. See ../docs/CONTRACT-v2.md. Prints JSON. Bad input: exit 2 and {"er
   mark-spoken <noteId> [...]
   show [--open] [--task tid] [--request rid]
   summary
+  workers [--outputs]
   reset
 """
 import argparse
 import fcntl
 import json
 import os
+import re
 import sys
 import tempfile
 from datetime import datetime
@@ -35,7 +38,13 @@ ARCHIVE = DATA / "tasks-archive.json"
 LOCK = DATA / "tasks.lock"
 BASELINE = DATA / "baseline" / "tasks.json"
 
-WORKERS = ("scout", "operator", "developer", "researcher")
+WORKERS_FILE = ROOT / "workers.json"  # the one worker registry (see load_workers)
+WORKER_ID_RE = re.compile(r"^[a-z][a-z0-9-]{1,23}$")
+COLOR_RE = re.compile(r"^#[0-9a-fA-F]{6}$")
+# Output folders live in the git-ignored runtime areas that bin/reset.sh may empty.
+OUTPUT_RE = re.compile(r"^(?:(?:outbox|queue)/[a-z0-9][a-z0-9._-]*(?:/[a-z0-9][a-z0-9._-]*)*"
+                       r"|workspace(?:/[a-z0-9][a-z0-9._-]*)*)$")
+BASH_RULE_RE = re.compile(r"^Bash\([^()\r\n]{1,200}\)$")
 FROMS = ("voice", "text", "clock")
 REQUEST_STATUSES = ("queued", "planning", "working", "needs_you", "done", "failed", "cancelled")
 TASK_STATUSES = ("queued", "working", "review", "needs_you", "approved", "done", "failed", "cancelled")
@@ -157,6 +166,72 @@ class Lock:
         self.fh.close()
 
 
+# ---------------------------------------------------------------- workers.json
+
+def check_workers(obj):
+    """Validate the parsed workers.json; return the normalised list or raise CliError."""
+    def bad(msg):
+        raise CliError("workers.json is invalid: %s" % msg)
+
+    if not isinstance(obj, dict) or not isinstance(obj.get("workers"), list):
+        bad('it must be an object with a "workers" list.')
+    if obj.get("version") != 1:
+        bad('"version" must be 1.')
+    if not obj["workers"]:
+        bad('the "workers" list is empty.')
+    out, seen = [], set()
+    for i, w in enumerate(obj["workers"], 1):
+        if not isinstance(w, dict):
+            bad("worker %d is not an object." % i)
+        wid = w.get("id")
+        if not isinstance(wid, str) or not WORKER_ID_RE.match(wid):
+            bad('worker %d: "id" must be 2 to 24 characters: a lowercase letter, then lowercase letters, '
+                'digits or dashes.' % i)
+        where = 'worker "%s"' % wid
+        if wid in seen:
+            bad("%s is listed twice." % where)
+        seen.add(wid)
+        label, color, summary, output = w.get("label"), w.get("color"), w.get("summary"), w.get("output")
+        if not isinstance(label, str) or not label.strip() or len(label) > 12 or label != label.upper():
+            bad('%s: "label" must be UPPERCASE text, at most 12 characters.' % where)
+        if not isinstance(color, str) or not COLOR_RE.match(color):
+            bad('%s: "color" must be a hex colour like "#4de3ff".' % where)
+        if not isinstance(summary, str) or not summary.strip() or len(summary) > 300:
+            bad('%s: "summary" must be one sentence of at most 300 characters.' % where)
+        if not isinstance(output, str) or not OUTPUT_RE.match(output):
+            bad('%s: "output" must be a folder inside outbox/ or queue/, or workspace '
+                '(relative, lowercase, e.g. "outbox/tests").' % where)
+        extra = w.get("extraBash", [])
+        if not isinstance(extra, list) or any(
+                not isinstance(r, str) or not BASH_RULE_RE.match(r) or not r[5:-1].strip(" *:")
+                for r in extra):
+            bad('%s: "extraBash" must be a list of rules like "Bash(npm test*)" (never "Bash(*)").' % where)
+        out.append({"id": wid, "label": label, "color": color, "summary": " ".join(summary.split()),
+                    "output": output, "extraBash": list(dict.fromkeys(extra))})
+    return out
+
+
+def load_workers():
+    """The workers from workers.json, in file order. Raises CliError with a clear message."""
+    try:
+        raw = WORKERS_FILE.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        raise CliError("workers.json is missing. It must sit in the project root and list the workers "
+                       "(see SETUP.md, Add a new worker).")
+    except OSError as exc:
+        raise CliError("workers.json cannot be read (%s)." % (exc.strerror or exc))
+    try:
+        obj = json.loads(raw)
+    except ValueError as exc:
+        raise CliError("workers.json is not valid JSON (%s)." % exc)
+    return check_workers(obj)
+
+
+def worker_ids():
+    """WORKERS: the worker ids from workers.json."""
+    return [w["id"] for w in load_workers()]
+
+
 # ---------------------------------------------------------------- helpers
 
 def find_request(board, rid):
@@ -271,6 +346,10 @@ def cmd_request_set(a):
 def cmd_task_add(a):
     title = text_arg(a.title, "Task title")
     detail = text_arg(a.detail, "Task detail", required=False)
+    workers = worker_ids()
+    if a.worker not in workers:
+        raise CliError("Unknown worker %r. The workers in workers.json are: %s."
+                       % (a.worker, ", ".join(workers)))
     with Lock():
         board = load_board()
         req = find_request(board, a.request)
@@ -521,6 +600,13 @@ def cmd_summary(a):
     return {"text": text}
 
 
+def cmd_workers(a):
+    workers = load_workers()
+    if a.outputs:
+        return "\n".join(dict.fromkeys(w["output"] for w in workers))
+    return {"workers": workers}
+
+
 def cmd_reset(a):
     with Lock():
         board = load_baseline()
@@ -563,7 +649,7 @@ def build_parser():
 
     s = sub.add_parser("task-add", add_help=False)
     s.add_argument("--request", type=pos_int, required=True)
-    s.add_argument("--worker", required=True, choices=WORKERS)
+    s.add_argument("--worker", required=True)
     s.add_argument("--title", required=True)
     s.add_argument("--detail")
     s.add_argument("--depends", type=id_list)
@@ -615,6 +701,10 @@ def build_parser():
     s = sub.add_parser("summary", add_help=False)
     s.set_defaults(fn=cmd_summary)
 
+    s = sub.add_parser("workers", add_help=False)
+    s.add_argument("--outputs", action="store_true")
+    s.set_defaults(fn=cmd_workers)
+
     s = sub.add_parser("reset", add_help=False)
     s.set_defaults(fn=cmd_reset)
     return p
@@ -634,7 +724,7 @@ def main(argv):
     except CliError as exc:
         print(json.dumps({"error": str(exc), "kind": exc.kind}))
         return 2
-    print(json.dumps(out, ensure_ascii=False))
+    print(out if isinstance(out, str) else json.dumps(out, ensure_ascii=False))
     return 0
 
 

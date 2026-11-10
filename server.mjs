@@ -54,6 +54,7 @@ function serveStatic(pathname, res) {
   const rel = normalize(decodeURIComponent(pathname)).replace(/^[/\\]+/, "");
   const top = rel.split(/[/\\]/)[0];
   if (!PUBLIC_DIRS.includes(top) || rel.includes("..")) return send(res, 404, "Not found");
+  if (rel === join("data", "workers.js")) return serveWorkersJs(res); // virtual, from workers.json
   const file = join(ROOT, rel);
   if (!file.startsWith(ROOT + top + sep)) return send(res, 404, "Not found");
   let st;
@@ -102,6 +103,9 @@ function readBody(req, limit) {
     req.on("error", reject);
   });
 }
+// Worker names help speech-to-text ("Scout", "Operator", ...), taken from workers.json.
+const workerTerms = () => (loadWorkers().workers || []).slice(0, 20)
+  .map((w) => w.label.charAt(0) + w.label.slice(1).toLowerCase());
 async function stt(req, res) {
   if (!voiceEnabled) return send(res, 503, "ElevenLabs not configured");
   try {
@@ -113,7 +117,7 @@ async function stt(req, res) {
       modelId: "scribe_v2",
       languageCode: "en",
       tagAudioEvents: false,
-      keyterms: ["Jarvis", "ROAS", "revenue", "Advisor", "Operator", "Scout", "morning brief"],
+      keyterms: ["Jarvis", "ROAS", "revenue", "Advisor", "morning brief", ...workerTerms()],
     });
     send(res, 200, JSON.stringify({ text: result?.text || "" }), TYPES[".json"]);
   } catch (err) {
@@ -160,6 +164,78 @@ function board(args) {
         resolve({ ok: code === 0 && json !== null, code, json, error: json?.error, kind: json?.kind });
       });
   });
+}
+
+// ---------------------------------------------------------------- v4: worker registry (workers.json)
+// See docs/CONTRACT-v4.md. workers.json is the ONE list of workers: the page (GET /data/workers.js),
+// the Manager (WORKERS block + extra allow rules), the Jarvis brain (WORKERS line), bin/board.py and
+// bin/reset.sh all read it. Read fresh on every use; the same checks as board.py's check_workers.
+const WORKERS_FILE = join(ROOT, "workers.json");
+const WORKER_ID_RE = /^[a-z][a-z0-9-]{1,23}$/;
+const COLOR_RE = /^#[0-9a-fA-F]{6}$/;
+const OUTPUT_RE = /^(?:(?:outbox|queue)\/[a-z0-9][a-z0-9._-]*(?:\/[a-z0-9][a-z0-9._-]*)*|workspace(?:\/[a-z0-9][a-z0-9._-]*)*)$/;
+const BASH_RULE_RE = /^Bash\([^()\r\n]{1,200}\)$/;
+
+// -> {workers: [...]} or {error: "workers.json ..."}
+function loadWorkers() {
+  let obj;
+  try { obj = JSON.parse(readFileSync(WORKERS_FILE, "utf8")); } catch (err) {
+    if (err?.code === "ENOENT") return { error: "workers.json is missing" };
+    if (err instanceof SyntaxError) return { error: `workers.json is not valid JSON (${cleanText(err.message)})` };
+    return { error: `workers.json cannot be read (${err?.code || err?.message || err})` };
+  }
+  const bad = (msg) => ({ error: `workers.json is invalid: ${msg}` });
+  if (!obj || typeof obj !== "object" || !Array.isArray(obj.workers)) return bad('it must be an object with a "workers" list');
+  if (obj.version !== 1) return bad('"version" must be 1');
+  if (!obj.workers.length) return bad('the "workers" list is empty');
+  const workers = []; const seen = new Set();
+  for (const [i, w] of obj.workers.entries()) {
+    if (!w || typeof w !== "object" || Array.isArray(w)) return bad(`worker ${i + 1} is not an object`);
+    const { id, label, color, summary, output } = w;
+    if (typeof id !== "string" || !WORKER_ID_RE.test(id)) return bad(`worker ${i + 1}: "id" must be 2 to 24 lowercase letters, digits or dashes, starting with a letter`);
+    if (seen.has(id)) return bad(`worker "${id}" is listed twice`);
+    seen.add(id);
+    if (typeof label !== "string" || !label.trim() || label.length > 12 || label !== label.toUpperCase()) return bad(`worker "${id}": "label" must be UPPERCASE text, at most 12 characters`);
+    if (typeof color !== "string" || !COLOR_RE.test(color)) return bad(`worker "${id}": "color" must be a hex colour like "#4de3ff"`);
+    if (typeof summary !== "string" || !summary.trim() || summary.length > 300) return bad(`worker "${id}": "summary" must be one sentence of at most 300 characters`);
+    if (typeof output !== "string" || !OUTPUT_RE.test(output)) return bad(`worker "${id}": "output" must be a folder inside outbox/ or queue/, or workspace`);
+    const extra = w.extraBash === undefined ? [] : w.extraBash;
+    if (!Array.isArray(extra) || extra.some((r) => typeof r !== "string" || !BASH_RULE_RE.test(r) || !r.slice(5, -1).replace(/[\s*:]/g, ""))) {
+      return bad(`worker "${id}": "extraBash" must be a list of rules like "Bash(npm test*)" (never "Bash(*)")`);
+    }
+    workers.push({ id, label, color, summary: cleanText(summary), output, extraBash: [...new Set(extra)] });
+  }
+  return { workers };
+}
+
+// Startup: say which workers are loaded, and warn about any without a matching subagent file.
+function checkWorkers() {
+  const { workers, error } = loadWorkers();
+  if (error) return console.warn(`[workers] WARNING: ${error}. The page falls back to its built-in list and the Manager cannot add tasks until it is fixed.`);
+  for (const w of workers) {
+    const rel = `.claude/agents/${w.id}.md`;
+    let text;
+    try { text = readFileSync(join(ROOT, rel), "utf8"); } catch {
+      console.warn(`[workers] WARNING: worker "${w.id}" has no ${rel}; the Manager cannot dispatch it.`);
+      continue;
+    }
+    const front = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text);
+    const name = front && /^name:[ \t]*["']?([^"'\r\n]*?)["']?[ \t]*$/m.exec(front[1]);
+    if (!name) console.warn(`[workers] WARNING: ${rel} has no "name:" in its frontmatter; it must be "name: ${w.id}".`);
+    else if (name[1] !== w.id) console.warn(`[workers] WARNING: ${rel} says "name: ${name[1]}" but workers.json says "${w.id}"; they must match.`);
+  }
+  console.log(`[workers] ${workers.map((w) => w.id).join(", ")} (from workers.json)`);
+}
+
+// GET /data/workers.js — generated on every request (there is no such file on disk).
+function serveWorkersJs(res) {
+  const { workers, error } = loadWorkers();
+  if (error) {
+    console.warn(`[workers] /data/workers.js: ${error}`);
+    return send(res, 500, `// ${cleanText(error)}\n`, TYPES[".js"]);
+  }
+  const body = JSON.stringify(workers, null, 2).replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
+  send(res, 200, `window.JARVIS = window.JARVIS || {};\nwindow.JARVIS.workers = ${body};\n`, TYPES[".js"]);
 }
 
 const sendJson = (res, code, obj) => send(res, code, JSON.stringify(obj), TYPES[".json"]);
@@ -242,6 +318,16 @@ function pump() {
   }
 }
 
+// Manager allow list = the fixed tools + every worker's extraBash rules from workers.json (deduplicated).
+const MANAGER_TOOLS = ["Read", "Glob", "Grep", "Write", "Edit", "Agent", "Task", "TodoWrite", "WebSearch", "WebFetch", "Bash(python3 *)"];
+const managerTools = (workers) => [...new Set([...MANAGER_TOOLS, ...workers.flatMap((w) => w.extraBash)])];
+
+// The WORKERS block that follows the EVENT line: "- <id>: <summary> (output: <folder>)".
+function managerWorkersBlock({ workers, error }) {
+  if (!workers) return `WORKERS: none (${error}). You cannot dispatch anyone in this run.`;
+  return ["WORKERS:", ...workers.map((w) => `- ${w.id}: ${w.summary} (output: ${w.output})`)].join("\n");
+}
+
 function killGroup(slot, sig) {
   const child = slot.child;
   if (!child || slot.exited) return;
@@ -259,15 +345,17 @@ async function startManager(slot) {
     const r = await board(["show", "--task", String(job.taskId)]);
     if (!r.ok || r.json.status !== "approved") { running.delete(slot); return pump(); }
   }
+  const reg = loadWorkers();
+  if (reg.error) console.warn(`[manager] ${slot.name}: ${reg.error}; the Manager gets no workers`);
   const prompt = job.kind === "request"
-    ? `EVENT: NEW_REQUEST id=${job.requestId} from=${job.from}\nOwner said: "${job.text}"`
-    : `EVENT: APPROVED task=${job.taskId} request=${job.requestId}\nOwner note: "${job.note || "none"}"`;
+    ? `EVENT: NEW_REQUEST id=${job.requestId} from=${job.from}\n${managerWorkersBlock(reg)}\nOwner said: "${job.text}"`
+    : `EVENT: APPROVED task=${job.taskId} request=${job.requestId}\n${managerWorkersBlock(reg)}\nOwner note: "${job.note || "none"}"`;
   // Manager sessions ARE saved (no --no-session-persistence) so the owner can open them with `claude --resume`.
   const args = [
     "-p", prompt, "--model", MANAGER_MODEL, "--output-format", "json",
     "--append-system-prompt-file", MANAGER_MD,
     "--permission-mode", "dontAsk", "--strict-mcp-config", "--setting-sources", "project",
-    "--allowedTools", "Read", "Glob", "Grep", "Write", "Edit", "Agent", "Task", "TodoWrite", "WebSearch", "WebFetch", "Bash(python3 *)",
+    "--allowedTools", ...managerTools(reg.workers || []),
   ];
   mkdirSync(MANAGER_LOGS, { recursive: true });
   const log = createWriteStream(join(MANAGER_LOGS, `${slot.name}.log`), { flags: "a" });
@@ -470,6 +558,8 @@ const MEMORY_LINES = 12;
 const PROMPT_BUDGET = 5900; // bytes; the contract asks for < 6 KB
 const FALLBACK_SAY = "Sorry, I lost my train of thought. Say that again?";
 const CHAT_FROMS = ["voice", "text"];
+// The brain's actions. "launch_agent" is deliberately NOT here: only the owner's own sentence can open
+// the Mission Control agent (see launchAgentChat); a brain reply with it is ignored like any unknown action.
 const ACTION_TYPES = ["none", "new_request", "approve", "reject", "cancel", "clear"];
 const TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || "local time";
 
@@ -624,9 +714,16 @@ function todayDigest() {
   return capSection(lines.join("\n"), 1900);
 }
 
+// One compact line: who is on the Manager's team (ids + summaries from workers.json).
+function workersLine() {
+  const { workers } = loadWorkers();
+  if (!workers) return "WORKERS: list not available right now";
+  return capSection(`WORKERS (the Manager's team): ${workers.map((w) => `${w.id} = ${clip(w.summary, 110)}`).join("; ")}`, 700);
+}
+
 function buildPrompt(text, from) {
   syncMemoryWithLog();
-  const head = [nowLine(), boardDigest(), todayDigest()].join("\n");
+  const head = [nowLine(), workersLine(), boardDigest(), todayDigest()].join("\n");
   const tail = `OWNER SAID (${from}): "${text}"\nReply with ONLY one JSON object: {"say":"...","action":{"type":"..."}}`;
   let budget = PROMPT_BUDGET - Buffer.byteLength(head) - Buffer.byteLength(tail) - 40;
   const chat = [];
@@ -763,6 +860,63 @@ function joinSay(brainSay, actionSay) {
   return `${/[.!?…]$/.test(brainSay) ? brainSay : `${brainSay}.`} ${actionSay}`;
 }
 
+// ---------------------------------------------------------------- v5: Mission Control agent
+// An interactive Claude Code session (bin/agent.sh, --permission-mode manual: it asks before every change)
+// in which the owner can change Jarvis itself. It opens ONLY when the owner's own sentence in /api/chat
+// says so: never from /api/ask (clock), never from a brain action, never from the Manager.
+// bin/open-agent.sh opens it in a new Terminal window (or reports it is already open). Tests point
+// JARVIS_OPEN_AGENT_BIN at a stub executable instead.
+const OPEN_AGENT_BIN = process.env.JARVIS_OPEN_AGENT_BIN || "";
+const OPEN_AGENT_SH = join(ROOT, "bin", "open-agent.sh");
+const OPEN_AGENT_TIMEOUT_MS = 30000; // the first time, macOS may ask the owner to allow controlling Terminal
+const LAUNCH_AGENT_RE = /\b(launch|open|start)\b[\s\S]{0,25}\bmission[\s-]*control\s+agent\b/i;
+const AGENT_HINT = "Open a terminal in the project folder and run npm run agent.";
+let agentLaunch = null; // the launch in progress; sentences that arrive meanwhile share it (one window)
+
+// -> {status: "opened"|"already_open"|"manual", hint?} or {status: "error", error}
+function runOpenAgent() {
+  const [file, args] = OPEN_AGENT_BIN ? [OPEN_AGENT_BIN, []] : ["bash", [OPEN_AGENT_SH]];
+  return new Promise((resolve) => {
+    execFile(file, args, { cwd: ROOT, env: childEnv(), timeout: OPEN_AGENT_TIMEOUT_MS, maxBuffer: 64 * 1024 },
+      (err, stdout, stderr) => {
+        let json = null;
+        const last = String(stdout || "").trim().split("\n").filter(Boolean).pop() || "";
+        try { json = JSON.parse(last); } catch { /* not JSON */ }
+        const status = json && typeof json === "object" && typeof json.status === "string" ? json.status : null;
+        if (!err && ["opened", "already_open", "manual"].includes(status)) {
+          return resolve({ status, hint: typeof json.hint === "string" ? json.hint : "" });
+        }
+        const why = (typeof json?.error === "string" && json.error) || String(stderr || "").trim()
+          || (err?.killed ? "timed out" : err?.message) || `unexpected output: ${last || "none"}`;
+        resolve({ status: "error", error: cleanText(why).slice(0, 300) });
+      });
+  });
+}
+
+function agentSay(r) {
+  switch (r.status) {
+    case "opened": return "Opening the Mission Control agent in a new Terminal window. It will ask before every change.";
+    case "already_open": return "The Mission Control agent is already open. I've brought Terminal to the front.";
+    case "manual": {
+      const hint = speakable(r.hint, 200);
+      return `I can't open a terminal window on this computer. ${hint ? (/[.!?]$/.test(hint) ? hint : `${hint}.`) : AGENT_HINT}`;
+    }
+    default: return `Sorry, I couldn't open the Mission Control agent. ${AGENT_HINT}`;
+  }
+}
+
+async function launchAgentChat(text, from, t0) {
+  if (!agentLaunch) agentLaunch = runOpenAgent().finally(() => { agentLaunch = null; });
+  const r = await agentLaunch;
+  const ok = r.status !== "error";
+  const say = agentSay(r);
+  remember("owner", text, { from });
+  remember("jarvis", say, { action: "launch_agent", ok });
+  const ms = Date.now() - t0;
+  console.log(`[agent] ${ms}ms launch_agent -> ${r.status}${r.error ? ` (${r.error})` : ""}`);
+  return { code: 200, body: { ok, say, action: { type: "launch_agent" }, requestId: null, ms } };
+}
+
 async function chatAction(body) {
   const t0 = Date.now();
   const reply = (code, ok, say, action = { type: "none" }, requestId = null) =>
@@ -772,6 +926,8 @@ async function chatAction(body) {
   if (text.length > MAX_TEXT) return reply(400, false, `That is too long. Please keep it under ${MAX_TEXT} characters.`);
   const from = body.from === undefined ? "text" : body.from;
   if (!CHAT_FROMS.includes(from)) return reply(400, false, "That message came from somewhere I do not know.");
+  // "Jarvis, launch mission control agent": handled here, before (and instead of) the brain.
+  if (LAUNCH_AGENT_RE.test(text)) return launchAgentChat(text, from, t0);
   if (brainLine.length >= MAX_BRAIN_QUEUE) return reply(429, false, "I'm still thinking about your last few messages. Please try again in a moment.");
 
   await acquireBrain();
@@ -831,6 +987,12 @@ async function api(req, res, pathname) {
   if (pathname === "/api/board") {
     return req.method === "GET" ? apiBoard(res) : sayErr(res, 405, "Use GET to read the board.");
   }
+  if (pathname === "/api/workers") { // the same workers array as /data/workers.js
+    if (req.method !== "GET") return sayErr(res, 405, "Use GET to read the workers.");
+    const { workers, error } = loadWorkers();
+    return workers ? sendJson(res, 200, workers)
+      : sendJson(res, 500, { ok: false, say: "My list of workers is broken. Please check workers.json.", error });
+  }
   const handler = POST_ROUTES[pathname];
   if (!handler) return sayErr(res, 404, "I do not know that command.");
   if (req.method !== "POST") return sayErr(res, 405, "Use POST for that.");
@@ -869,7 +1031,8 @@ const server = createServer(async (req, res) => {
   if (url.pathname === "/api/stt" && req.method === "POST") {
     return stt(req, res);
   }
-  if (url.pathname === "/api/ask" || url.pathname === "/api/chat" || url.pathname === "/api/board" || url.pathname.startsWith("/api/board/")) {
+  if (url.pathname === "/api/ask" || url.pathname === "/api/chat" || url.pathname === "/api/board" || url.pathname.startsWith("/api/board/")
+    || url.pathname === "/api/workers") {
     return api(req, res, url.pathname);
   }
   if (req.method !== "GET") return send(res, 405, "Method not allowed");
@@ -879,4 +1042,5 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, HOST, () => {
   console.log(`Jarvis HUD: http://${HOST}:${PORT}/  (voice: ${voiceEnabled ? `ElevenLabs ${MODEL_ID}` : "browser fallback"}; brain: ${BRAIN_MODEL}, max ${MAX_BRAINS})`);
   if (MAX_MANAGERS === 0) console.log("[manager] paused (JARVIS_MAX_MANAGERS=0): new requests stay queued");
+  checkWorkers();
 });

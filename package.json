@@ -3,12 +3,14 @@
   "version": "0.3.0",
   "private": true,
   "type": "module",
-  "description": "A local voice 'personal Jarvis' demo: a Jarvis page, a Claude Code Manager and four Claude Code workers on mock data.",
+  "description": "A local voice 'personal Jarvis' demo: a Jarvis page, a Claude Code Manager and Claude Code workers (listed in workers.json) on mock data.",
   "scripts": {
     "start": "node server.mjs",
     "setup": "bash bin/setup.sh",
     "reset": "bash bin/reset.sh",
-    "test": "node tests/run-all.mjs"
+    "test": "node tests/run-all.mjs",
+    "agent": "bash bin/agent.sh",
+    "restart": "bash bin/restart-server.sh"
   },
   "engines": {
     "node": ">=20.12"

@@ -3,6 +3,9 @@ window.JARVIS.board = {
   "updatedAt": "2026-11-09T10:04:40-05:00",
   "nextRequest": 4, "nextTask": 6, "nextNote": 13,
   "requests": [
+    {"id": 1, "text": "write a script that lists failed payments by day", "from": "voice",
+     "status": "done", "reply": "The failed-payments script is in workspace/task-1/ and the Tester passed it on 6 of 6 checks.",
+     "taskIds": [1, 2], "createdAt": "2026-11-09T08:31:50-05:00", "updatedAt": "2026-11-09T08:58:12-05:00"},
     {"id": 2, "text": "research what Notely and Inkwell charge for their yearly plans", "from": "text",
      "status": "done", "reply": "Notely Plus is $89.99 a year and Inkwell Pro is $34.99, so Acme Notes Pro at $59.99 sits in the middle. Sources are in outbox/research/task-3.md.",
      "taskIds": [3], "createdAt": "2026-11-09T09:20:12-05:00", "updatedAt": "2026-11-09T09:31:40-05:00"},
@@ -11,6 +14,29 @@ window.JARVIS.board = {
      "createdAt": "2026-11-09T09:41:03-05:00", "updatedAt": "2026-11-09T10:04:40-05:00"}
   ],
   "tasks": [
+    {"id": 1, "requestId": 1, "title": "Build a failed-payments-by-day script",
+     "detail": "python3 script in workspace/task-1/ that reads sources/revenuecat.json and lists failed payments per day, with a quick self-check.",
+     "worker": "developer", "status": "done", "dependsOn": [],
+     "result": "workspace/task-1/failed_payments.py lists failed payments per day; self-check passed.",
+     "files": ["workspace/task-1/failed_payments.py", "workspace/task-1/README.md"], "approval": null,
+     "log": [
+       {"t": "2026-11-09T08:33:02-05:00", "msg": "Reading sources/revenuecat.json"},
+       {"t": "2026-11-09T08:37:45-05:00", "msg": "Wrote workspace/task-1/failed_payments.py"},
+       {"t": "2026-11-09T08:39:10-05:00", "msg": "Self-check: Nov 8 shows 4 failed payments"}
+     ],
+     "createdAt": "2026-11-09T08:32:30-05:00", "updatedAt": "2026-11-09T08:40:05-05:00"},
+    {"id": 2, "requestId": 1, "title": "Test the failed-payments script (task 1)",
+     "detail": "Run workspace/task-1/ with python3, try edge cases (empty day, bad date, refunds), check the totals against sources/revenuecat.json. PASS/FAIL report.",
+     "worker": "tester", "status": "done", "dependsOn": [1],
+     "result": "PASS - 6/6 checks: totals match sources/revenuecat.json; empty days and bad dates handled.",
+     "files": ["outbox/tests/task-2.md"], "approval": null,
+     "log": [
+       {"t": "2026-11-09T08:41:20-05:00", "msg": "Running workspace/task-1/failed_payments.py"},
+       {"t": "2026-11-09T08:45:03-05:00", "msg": "Edge cases: empty day, bad date, refund row"},
+       {"t": "2026-11-09T08:49:36-05:00", "msg": "Totals match sources/revenuecat.json (6/6 checks)"},
+       {"t": "2026-11-09T08:51:12-05:00", "msg": "PASS - wrote outbox/tests/task-2.md"}
+     ],
+     "createdAt": "2026-11-09T08:32:31-05:00", "updatedAt": "2026-11-09T08:57:40-05:00"},
     {"id": 3, "requestId": 2, "title": "Compare Notely and Inkwell yearly plan pricing",
      "detail": "Find current yearly prices for Notely Plus and Inkwell Pro, cite URLs and dates, compare with Acme Notes Pro ($59.99/yr).",
      "worker": "researcher", "status": "done", "dependsOn": [],
@@ -51,6 +77,7 @@ window.JARVIS.board = {
      "createdAt": "2026-11-09T09:42:21-05:00", "updatedAt": "2026-11-09T10:04:40-05:00"}
   ],
   "notes": [
+    {"id": 7, "t": "2026-11-09T08:58:13-05:00", "text": "Request 1 is done. The failed-payments script passed all 6 of the Tester's checks.", "requestId": 1, "taskId": null, "spoken": true},
     {"id": 8, "t": "2026-11-09T09:20:13-05:00", "text": "On it. That's request 2.", "requestId": 2, "taskId": null, "spoken": true},
     {"id": 9, "t": "2026-11-09T09:31:41-05:00", "text": "Request 2 is done. Notely Plus is $89.99 a year and Inkwell Pro is $34.99, so Acme Notes Pro sits in the middle.", "requestId": 2, "taskId": null, "spoken": true},
     {"id": 10, "t": "2026-11-09T09:41:04-05:00", "text": "On it. That's request 3.", "requestId": 3, "taskId": null, "spoken": true},

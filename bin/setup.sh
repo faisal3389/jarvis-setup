@@ -57,8 +57,9 @@ command -v curl >/dev/null 2>&1 && ok "curl (used by bin/ask.sh for schedules)" 
 
 echo
 echo "2. Creating runtime folders"
+# Each worker's own output folder (from workers.json) is created by bin/reset.sh in step 4.
 for d in logs logs/manager \
-         outbox/analysis outbox/research outbox/drafts outbox/sent-simulated outbox/published-simulated outbox/dev-tasks \
+         outbox/sent-simulated outbox/published-simulated outbox/dev-tasks \
          queue/dev workspace; do
   mkdir -p "$d"
   [[ -e "$d/.gitkeep" ]] || touch "$d/.gitkeep"

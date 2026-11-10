@@ -31,6 +31,8 @@ data/tasks-archive.json
 data/tasks.lock
 data/.jarvis-tmp-*
 data/.board-tmp-*
+# Served by server.mjs, generated from workers.json on every request (never a file)
+data/workers.js
 
 # OS, Python and test leftovers
 .DS_Store
